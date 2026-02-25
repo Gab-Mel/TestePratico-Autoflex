@@ -1,0 +1,6 @@
+-- conecta como SYSTEM
+
+CREATE USER autoflex IDENTIFIED BY autoflex;
+
+GRANT CONNECT, RESOURCE TO autoflex;
+GRANT UNLIMITED TABLESPACE TO autoflex;

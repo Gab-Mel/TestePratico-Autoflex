@@ -55,4 +55,18 @@ RF008 – Desenvolver no front-end uma interface gráfica que possibilite listar
 
 - Desenvolvimento de testes de integração. Caso tenha conhecimento da tecnologia Cypress, a sugestão é utilizá-la já que utilizamos no Autoflex.
 
+# Solução 
+
+# Instalação
+
+## Setup inicial:
+
+antes de qualquer coisa precisamos de um banco de dados.
+na pasta `db`temos o schema do banco adapitado para oracle XE.
+
+não se esqueça de baixar o oracle XE :\).
+
+Para gerar o banco de um click duplo em make-db.bat ou simplesmente digite .\db\make-db.bat
+
+a criação de usuario já está automatizada :\).
 
