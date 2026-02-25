@@ -64,9 +64,8 @@ RF008 – Desenvolver no front-end uma interface gráfica que possibilite listar
 ### Banco de dados
 
 antes de qualquer coisa precisamos de um banco de dados.
-na pasta `db`temos o schema do banco adapitado para oracle XE.
-
-Para facilitar usaremos um docker já configurado. apenas execute `docker compose up -d`.
+na pasta `db`temos o schema do banco adapitado para oracle XE e schema.sqlite.sql que usarei para facilitar o uso para qualquer usuário.
+esses bancos serão gerados altomaticamente pela api.
 
 ### API
 
