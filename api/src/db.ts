@@ -1,12 +1,35 @@
-import oracledb from "oracledb";
-import dotenv from "dotenv";
+import Database from "better-sqlite3";
+import fs from "fs";
+import path from "path";
 
-dotenv.config();
+const dbPath = path.resolve(__dirname, "../../db/database.db");
+const schemaPath = path.resolve(__dirname, "../../db/schema.sqlite.sql");
 
-export async function getConnection() {
-  return await oracledb.getConnection({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    connectString: process.env.DB_CONNECT
-  });
+const db = new Database(dbPath);
+
+// cria schema automaticamente
+const schema = fs.readFileSync(schemaPath, "utf-8");
+db.exec(schema);
+
+/**
+ * Interface compatível com Oracle
+ */
+export function getConnection() {
+  return {
+    execute: (sql: string, params: any[] = []) => {
+      const stmt = db.prepare(sql);
+
+      if (sql.trim().toUpperCase().startsWith("SELECT")) {
+        const rows = stmt.all(params);
+        return { rows };
+      } else {
+        const result = stmt.run(params);
+        return { rowsAffected: result.changes };
+      }
+    },
+
+    close: async () => {
+      // sqlite não precisa fechar por request
+    },
+  };
 }

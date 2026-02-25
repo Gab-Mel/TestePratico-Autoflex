@@ -61,12 +61,16 @@ RF008 – Desenvolver no front-end uma interface gráfica que possibilite listar
 
 ## Setup inicial:
 
+### Banco de dados
+
 antes de qualquer coisa precisamos de um banco de dados.
 na pasta `db`temos o schema do banco adapitado para oracle XE.
 
-não se esqueça de baixar o oracle XE :\).
+Para facilitar usaremos um docker já configurado. apenas execute `docker compose up -d`.
 
-Para gerar o banco de um click duplo em make-db.bat ou simplesmente digite .\db\make-db.bat
+### API
 
-a criação de usuario já está automatizada :\).
+entre na pasta api e rode em sequencia os seguintes comandos:
+
+`npm init -y`, `npm install` e `npm run dev`
 
