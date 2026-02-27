@@ -1,7 +1,7 @@
 import Navbar from "./components/Navbar";
 import Suggestions from "./components/Suggestions";
-import ProductsForm from "./components/ProductsForm";
-import MaterialsForm from "./components/MaterialsForm";
+import ProductsPainel from "./components/ProductsPainel";
+import MaterialsPainel from "./components/MaterialsPainel";
 
 import "./index.css";
 
@@ -16,8 +16,8 @@ function App() {
         </div>
 
         <div className="right">
-          <ProductsForm />
-          <MaterialsForm />
+          <ProductsPainel />
+          <MaterialsPainel />
         </div>
       </div>
     </>

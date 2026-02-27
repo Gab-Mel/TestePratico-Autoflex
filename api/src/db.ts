@@ -14,22 +14,19 @@ db.exec(schema);
 /**
  * Interface compatível com Oracle
  */
-export function getConnection() {
+export const getConnection = () => {
   return {
     execute: (sql: string, params: any[] = []) => {
       const stmt = db.prepare(sql);
 
       if (sql.trim().toUpperCase().startsWith("SELECT")) {
-        const rows = stmt.all(params);
-        return { rows };
-      } else {
-        const result = stmt.run(params);
-        return { rowsAffected: result.changes };
+        return { rows: stmt.all(params) };
       }
+
+      const result = stmt.run(params);
+      return { rowsAffected: result.changes };
     },
 
-    close: async () => {
-      // sqlite não precisa fechar por request
-    },
+    close: async () => {},
   };
-}
+};
