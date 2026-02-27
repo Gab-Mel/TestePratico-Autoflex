@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
+import RequirementsEditor, {
+  type Requirement,
+} from "./RequirementList";
 
 export default function ProductPanel() {
   const [products, setProducts] = useState<any[]>([]);
@@ -8,10 +11,23 @@ export default function ProductPanel() {
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
 
+  const [requirements, setRequirements] =
+    useState<Requirement[]>([]);
+
+  const [raws, setRaws] = useState<any[]>([]);
+
   async function load() {
-    const res = await fetch("http://localhost:3000/products");
+    const res = await fetch(
+      "http://localhost:3000/products"
+    );
     setProducts(await res.json());
   }
+
+  useEffect(() => {
+    fetch("/api/materials")
+      .then((r) => r.json())
+      .then(setRaws);
+  }, []);
 
   useEffect(() => {
     load();
@@ -26,12 +42,22 @@ export default function ProductPanel() {
       body: JSON.stringify({
         name,
         value: Number(value),
+
+        // adaptação Requirement -> API DTO
+        requirements: requirements
+          .filter((r) => r.cod_raw && r.quantidade)
+          .map((r) => ({
+            material_id: Number(r.cod_raw),
+            quantity: Number(r.quantidade),
+          })),
       }),
     });
 
     setOpen(false);
     setName("");
     setValue("");
+    setRequirements([]);
+
     load();
   }
 
@@ -40,6 +66,7 @@ export default function ProductPanel() {
       {/* HEADER */}
       <div className="panel-header">
         <h3>Produtos</h3>
+
         <button
           className="add-btn"
           onClick={() => setOpen(true)}
@@ -65,14 +92,25 @@ export default function ProductPanel() {
           <input
             placeholder="Nome"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) =>
+              setName(e.target.value)
+            }
           />
 
           <input
             type="number"
             placeholder="Valor"
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) =>
+              setValue(e.target.value)
+            }
+          />
+
+          {/* EDITOR DE REQUISITOS */}
+          <RequirementsEditor
+            raws={raws}
+            value={requirements}
+            onChange={setRequirements}
           />
 
           <button type="submit">Salvar</button>
