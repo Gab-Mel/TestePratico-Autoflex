@@ -24,7 +24,7 @@ export default function ProductPanel() {
   }
 
   useEffect(() => {
-    fetch("/api/materials")
+    fetch("http://localhost:3000/materials")
       .then((r) => r.json())
       .then(setRaws);
   }, []);

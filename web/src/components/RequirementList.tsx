@@ -22,8 +22,10 @@ export default function RequirementsEditor({
     key: keyof Requirement,
     val: any
   ) => {
-    const copy = [...value];
-    copy[i][key] = val;
+    const copy = value.map((item, idx) =>
+      idx === i ? { ...item, [key]: val } : item
+    );
+
     onChange(copy);
   };
 
@@ -35,32 +37,24 @@ export default function RequirementsEditor({
   return (
     <>
       {value.map((r, i) => (
-        <div
-          key={i}
-          style={{ display: "flex", gap: 8 }}
-        >
+        <div key={i} style={{ display: "flex", gap: 8 }}>
           <select
+            disabled={!raws?.length}
             value={r.cod_raw ?? ""}
             onChange={(e) =>
-              update(
-                i,
-                "cod_raw",
-                Number(e.target.value)
-              )
+              update(i, "cod_raw", Number(e.target.value))
             }
           >
-            <option value="">
-              matéria-prima
+            <option value="" disabled hidden>
+            selecione a matéria-prima
             </option>
 
-            {raws.map((raw) => (
-              <option
-                key={raw.cod}
-                value={raw.cod}
-              >
-                {raw.name}
-              </option>
-            ))}
+            {raws?.length > 0 &&
+              raws.map((raw) => (
+                <option key={raw.cod} value={raw.cod}>
+                  {raw.name}
+                </option>
+              ))}
           </select>
 
           <input
@@ -68,18 +62,11 @@ export default function RequirementsEditor({
             placeholder="quantidade"
             value={r.quantidade ?? ""}
             onChange={(e) =>
-              update(
-                i,
-                "quantidade",
-                Number(e.target.value)
-              )
+              update(i, "quantidade", Number(e.target.value))
             }
           />
 
-          <button
-            type="button"
-            onClick={() => remove(i)}
-          >
+          <button type="button" onClick={() => remove(i)}>
             x
           </button>
         </div>
