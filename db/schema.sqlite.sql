@@ -17,7 +17,7 @@ CREATE TABLE raw_materials (
     name TEXT NOT NULL,
     amount REAL NOT NULL,
     cust REAL NOT NULL,
-    unit_measure REAL NOT NULL
+    unit_measure TEXT NOT NULL
 );
 
 -- =========================
@@ -26,7 +26,7 @@ CREATE TABLE raw_materials (
 CREATE TABLE products_raw_materials (
     cod_product INTEGER NOT NULL,
     cod_raw INTEGER NOT NULL,
-    quantidade REAL NOT NULL,
+    amount REAL NOT NULL,
 
     PRIMARY KEY (cod_product, cod_raw),
 
@@ -83,3 +83,9 @@ CREATE TABLE raw_material_purchase_history (
         REFERENCES raw_materials(cod)
         ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS idx_prm_product
+ON products_raw_materials(cod_product);
+
+CREATE INDEX IF NOT EXISTS idx_prm_raw
+ON products_raw_materials(cod_raw);

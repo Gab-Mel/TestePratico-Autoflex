@@ -12,12 +12,13 @@ router.get("/", (req, res) => {
 
     const result = conn.execute(`
       SELECT *
-      FROM products_and_materials
-      ORDER BY product_id
+      FROM products_raw_materials
+      ORDER BY cod_product
     `);
 
     res.json(result.rows);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao listar relações" });
   }
 });
@@ -33,15 +34,16 @@ router.get("/product/:productId", (req, res) => {
     const result = conn.execute(
       `
       SELECT *
-      FROM products_and_materials
-      WHERE product_id = ?
+      FROM products_raw_materials
+      WHERE cod_product = ?
       `,
-      [productId]
+      [Number(productId)]
     );
 
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: "Erro ao buscar relações do produto" });
+    console.error(err);
+    res.status(500).json({ error: "Erro ao buscar relações" });
   }
 });
 
@@ -51,19 +53,20 @@ router.get("/product/:productId", (req, res) => {
 router.post("/", (req, res) => {
   try {
     const conn = getConnection();
-    const { product_id, material_id, quantity } = req.body;
+    const { cod_product, cod_raw, amount } = req.body;
 
     conn.execute(
       `
-      INSERT INTO products_and_materials
-      (product_id, material_id, quantity)
+      INSERT INTO products_raw_materials
+      (cod_product, cod_raw, amount)
       VALUES (?, ?, ?)
       `,
-      [product_id, material_id, quantity]
+      [cod_product, cod_raw, amount]
     );
 
     res.status(201).json({ message: "Relação criada" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao criar relação" });
   }
 });
@@ -71,23 +74,23 @@ router.post("/", (req, res) => {
 /**
  * ATUALIZAR RELAÇÃO
  */
-router.put("/:id", (req, res) => {
+router.put("/", (req, res) => {
   try {
     const conn = getConnection();
-    const { id } = req.params;
-    const { quantity } = req.body;
+    const { cod_product, cod_raw, amount } = req.body;
 
     conn.execute(
       `
-      UPDATE products_and_materials
-      SET quantity = ?
-      WHERE id = ?
+      UPDATE products_raw_materials
+      SET amount = ?
+      WHERE cod_product = ? AND cod_raw = ?
       `,
-      [quantity, id]
+      [amount, cod_product, cod_raw]
     );
 
     res.json({ message: "Relação atualizada" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao atualizar relação" });
   }
 });
@@ -95,21 +98,22 @@ router.put("/:id", (req, res) => {
 /**
  * DELETAR RELAÇÃO
  */
-router.delete("/:id", (req, res) => {
+router.delete("/", (req, res) => {
   try {
     const conn = getConnection();
-    const { id } = req.params;
+    const { cod_product, cod_raw } = req.body;
 
     conn.execute(
       `
-      DELETE FROM products_and_materials
-      WHERE id = ?
+      DELETE FROM products_raw_materials
+      WHERE cod_product = ? AND cod_raw = ?
       `,
-      [id]
+      [cod_product, cod_raw]
     );
 
     res.status(204).send();
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao deletar relação" });
   }
 });
