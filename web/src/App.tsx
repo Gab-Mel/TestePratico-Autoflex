@@ -10,19 +10,32 @@ import { useState } from "react";
 
 function App() {
   const [responsible, setResponsible] = useState<string>("GabMel");
-  const [lastEdited, setLastEdited] = useState<string | null>(null);
+  const [lastMaterialEditedOn, setLastMaterialEditedOn] = useState<string | null>(null);
+  const [lastProductEditedOn, setLastProductEditedOn] = useState<string | null>(null);
   return (
     <>
       <Navbar />
 
       <div className="container">
         <div className="left">
-          <Suggestions responsible={responsible}/>
+          <Suggestions 
+            responsible={responsible}
+            lastMaterialEditedOn={lastMaterialEditedOn}
+            lastProductEditedOn={lastProductEditedOn}
+            setLastMaterialEditedOn={setLastMaterialEditedOn}
+          />
         </div>
 
         <div className="right">
-          <ProductsPainel responsible={responsible} />
-          <MaterialsPainel responsible={responsible} />
+          <ProductsPainel 
+            responsible={responsible} 
+            setLastProductEditedOn={setLastProductEditedOn}
+          />
+          <MaterialsPainel 
+            responsible={responsible} 
+            setLastMaterialEditedOn={setLastMaterialEditedOn} 
+            materialEditedOn={lastMaterialEditedOn}
+          />
         </div>
       </div>
     </>

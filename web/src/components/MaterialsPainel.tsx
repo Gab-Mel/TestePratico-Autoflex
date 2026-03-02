@@ -7,9 +7,15 @@ import Modal from "./Modal";
 
 type Props = {
   responsible: string;
+  setLastMaterialEditedOn: (name: string) => void;
+  materialEditedOn: string | null;
 };
 
-export default function MaterialPanel({ responsible }: Props) {
+export default function MaterialPanel({ 
+    responsible, 
+    setLastMaterialEditedOn, 
+    materialEditedOn 
+  }: Props) {
   const [materials, setMaterials] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -37,7 +43,7 @@ export default function MaterialPanel({ responsible }: Props) {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [materialEditedOn]);
 
   /* =========================
      EDIT
@@ -51,6 +57,7 @@ export default function MaterialPanel({ responsible }: Props) {
     setUnitMeasure(material.unit_measure);
 
     setOpen(true);
+    setLastMaterialEditedOn(Date.now().toString());
   }
 
   /* =========================
@@ -71,6 +78,7 @@ export default function MaterialPanel({ responsible }: Props) {
     });
 
     load();
+    setLastMaterialEditedOn(Date.now().toString());
   }
 
   /* =========================
@@ -108,6 +116,7 @@ export default function MaterialPanel({ responsible }: Props) {
     setUnitMeasure("");
 
     load();
+    setLastMaterialEditedOn(Date.now().toString());
   }
 
   /* =========================
