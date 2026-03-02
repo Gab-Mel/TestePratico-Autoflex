@@ -65,6 +65,9 @@ export default function MaterialPanel({ responsible }: Props) {
 
     await fetch(`http://localhost:3000/materials/${id}`, {
       method: "DELETE",
+      headers: {
+        "x-user": responsible
+      }
     });
 
     load();

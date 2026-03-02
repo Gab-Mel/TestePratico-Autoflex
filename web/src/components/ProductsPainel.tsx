@@ -205,6 +205,9 @@ export default function ProductPanel({ responsible }: Props) {
 
     await fetch(`http://localhost:3000/products/${id}`, {
       method: "DELETE",
+      headers: {
+        "x-user": responsible
+      }
     });
 
     load();
