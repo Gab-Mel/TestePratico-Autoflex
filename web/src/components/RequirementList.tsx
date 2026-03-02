@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export type Requirement = {
   cod_product?: number;
   cod_raw?: number;

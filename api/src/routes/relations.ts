@@ -1,5 +1,15 @@
 import { Router } from "express";
 import { getConnection } from "../db";
+import { registerHistory } from "../utils/history";
+
+/* =========================
+    Types
+========================= */
+type ProductRawRelation = {
+  cod_product: number;
+  cod_raw: number;
+  amount: number;
+};
 
 const router = Router();
 
@@ -47,13 +57,23 @@ router.get("/product/:productId", (req, res) => {
   }
 });
 
-/**
- * CRIAR RELAÇÃO
- */
-router.post("/", (req, res) => {
+/* =========================
+   Insert
+========================= */
+router.post("/", async (req, res) => {
   try {
+    const responsible =
+      req.headers["x-user"]?.toString() ?? "unknown";
     const conn = getConnection();
     const { cod_product, cod_raw, amount } = req.body;
+
+    await registerHistory({
+      table: "products_raw_materials",
+      lineId: cod_product,
+      column: `raw_${cod_raw}`,
+      newValue: amount,
+      responsible,
+    });
 
     conn.execute(
       `
@@ -71,13 +91,35 @@ router.post("/", (req, res) => {
   }
 });
 
-/**
- * ATUALIZAR RELAÇÃO
- */
-router.put("/", (req, res) => {
+/* =========================
+   Mutate
+========================= */
+router.put("/", async (req, res) => {
   try {
+    const responsible =
+      req.headers["x-user"]?.toString() ?? "unknown";
     const conn = getConnection();
+
     const { cod_product, cod_raw, amount } = req.body;
+    const old = await conn.execute(
+      `SELECT amount FROM products_raw_materials
+      WHERE cod_product=? AND cod_raw=?`,
+      [cod_product, cod_raw]
+    ) as { rows: { amount: number }[] };
+
+    
+    const oldAmount = old.rows[0]?.amount;
+
+    if (oldAmount !== amount) {
+      await registerHistory({
+        table: "products_raw_materials",
+        lineId: cod_product,
+        column: `raw_${cod_raw}`,
+        oldValue: oldAmount,
+        newValue: amount,
+        responsible,
+      });
+    }
 
     conn.execute(
       `
@@ -95,13 +137,30 @@ router.put("/", (req, res) => {
   }
 });
 
-/**
- * DELETAR RELAÇÃO
- */
-router.delete("/", (req, res) => {
+/* =========================
+   Delete
+========================= */
+router.delete("/", async(req, res) => {
   try {
+    const responsible =
+      req.headers["x-user"]?.toString() ?? "unknown";
     const conn = getConnection();
     const { cod_product, cod_raw } = req.body;
+
+    const old = await conn.execute(
+      `SELECT amount FROM products_raw_materials
+      WHERE cod_product=? AND cod_raw=?`,
+      [cod_product, cod_raw]
+    ) as { rows: { amount: number }[] };
+
+    await registerHistory({
+      table: "products_raw_materials",
+      lineId: cod_product,
+      column: `raw_${cod_raw}`,
+      oldValue: old.rows[0]?.amount,
+      newValue: "DELETED",
+      responsible,
+    });
 
     conn.execute(
       `

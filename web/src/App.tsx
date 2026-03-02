@@ -4,8 +4,15 @@ import ProductsPainel from "./components/ProductsPainel";
 import MaterialsPainel from "./components/MaterialsPainel";
 
 import "./index.css";
+import { useState } from "react"; 
+
+/* const [lastEdited, setLastEdited] = useState<string | null>(null); */
+
+
+
 
 function App() {
+  const [responsible, setResponsible] = useState<string>("");
   return (
     <>
       <Navbar />
@@ -16,8 +23,8 @@ function App() {
         </div>
 
         <div className="right">
-          <ProductsPainel />
-          <MaterialsPainel />
+          <ProductsPainel responsible={responsible} />
+          <MaterialsPainel responsible={responsible} />
         </div>
       </div>
     </>

@@ -4,10 +4,27 @@ import RequirementsEditor, {
   type Requirement,
 } from "./RequirementList";
 
+/* ================= TYPES ================= */
 
+type Product = {
+  cod: number;
+  name: string;
+  value: number;
+};
 
-export default function ProductPanel() {
-  const [products, setProducts] = useState<any[]>([]);
+type RawMaterial = {
+  cod: number;
+  name: string;
+};
+
+type Props = {
+  responsible: string;
+};
+
+/* ================= COMPONENT ================= */
+
+export default function ProductPanel({ responsible }: Props) {
+  const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -18,7 +35,7 @@ export default function ProductPanel() {
   const [requirements, setRequirements] =
     useState<Requirement[]>([]);
 
-  const [raws, setRaws] = useState<any[]>([]);
+  const [raws, setRaws] = useState<RawMaterial[]>([]);
 
   /* ================= LOAD ================= */
 
@@ -40,7 +57,7 @@ export default function ProductPanel() {
   async function saveProduct(e: React.FormEvent) {
     e.preventDefault();
 
-    let productId = editingId;
+    let productId: number | null = editingId;
 
     const payload = {
       name,
@@ -48,31 +65,41 @@ export default function ProductPanel() {
     };
 
     /* ---------- CREATE ---------- */
-    if (!editingId) {
+    if (productId === null) {
       const res = await fetch(
         "http://localhost:3000/products",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+          "Content-Type": "application/json",
+          "x-user": responsible
+        },
           body: JSON.stringify(payload),
         }
       );
 
-      const created = await res.json();
-      productId = created.cod;
+      const created: Product = await res.json();
+
+      // garante número (resolve bigint | undefined)
+      productId = Number(created.cod);
     }
 
     /* ---------- UPDATE ---------- */
     else {
       await fetch(
-        `http://localhost:3000/products/${editingId}`,
+        `http://localhost:3000/products/${productId}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-user": responsible
+          },
           body: JSON.stringify(payload),
         }
       );
     }
+
+    if (productId === null) return;
 
     /* ================= SYNC RELATIONS ================= */
 
@@ -95,12 +122,15 @@ export default function ProductPanel() {
         .map((r) => [r.cod_raw, r])
     );
 
-    /* DELETE removidos */
+    /* ---------- DELETE removidos ---------- */
     for (const r of currentRelations) {
       if (!newMap.has(r.cod_raw)) {
         await fetch("http://localhost:3000/relations", {
           method: "DELETE",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-user": responsible
+          },
           body: JSON.stringify({
             cod_product: productId,
             cod_raw: r.cod_raw,
@@ -109,29 +139,33 @@ export default function ProductPanel() {
       }
     }
 
-    /* CREATE ou UPDATE */
+    /* ---------- CREATE ou UPDATE ---------- */
     for (const req of newMap.values()) {
       const exists = currentMap.get(req.cod_raw);
+
+      const body = JSON.stringify({
+        cod_product: productId,
+        cod_raw: req.cod_raw,
+        amount: req.quantidade,
+      });
 
       if (!exists) {
         await fetch("http://localhost:3000/relations", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cod_product: productId,
-            cod_raw: req.cod_raw,
-            amount: req.quantidade,
-          }),
+          headers: {
+            "Content-Type": "application/json",
+            "x-user": responsible
+          },
+          body,
         });
       } else {
         await fetch("http://localhost:3000/relations", {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cod_product: productId,
-            cod_raw: req.cod_raw,
-            amount: req.quantidade,
-          }),
+          headers: {
+            "Content-Type": "application/json",
+            "x-user": responsible
+          },
+          body,
         });
       }
     }
@@ -142,7 +176,7 @@ export default function ProductPanel() {
 
   /* ================= EDIT ================= */
 
-  async function editProduct(p: any) {
+  async function editProduct(p: Product) {
     setEditingId(p.cod);
     setName(p.name);
     setValue(String(p.value));

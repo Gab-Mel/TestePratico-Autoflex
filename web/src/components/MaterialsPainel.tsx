@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
 
-export default function MaterialPanel() {
+/* =========================
+    TYPES
+========================= */
+
+type Props = {
+  responsible: string;
+};
+
+export default function MaterialPanel({ responsible }: Props) {
   const [materials, setMaterials] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -76,7 +84,10 @@ export default function MaterialPanel() {
 
     await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "x-user": responsible
+      },
       body: JSON.stringify({
         name,
         amount: Number(amount),
