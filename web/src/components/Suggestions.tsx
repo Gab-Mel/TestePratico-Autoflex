@@ -26,10 +26,18 @@ type Suggestion = {
 
 type Props = {
   responsible: string;
+  lastProductEditedOn: string | null;
+  lastMaterialEditedOn: string | null;
+  setLastMaterialEditedOn: (name: string) => void;
 };
 
 
-export default function Suggestions({ responsible }: Props) {
+export default function Suggestions({ 
+    responsible, 
+    lastProductEditedOn, 
+    lastMaterialEditedOn, 
+    setLastMaterialEditedOn 
+  }: Props) {
   const [open, setOpen] = useState(false);
 
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -49,7 +57,7 @@ export default function Suggestions({ responsible }: Props) {
     }
 
     load();
-  }, []);
+  }, [lastProductEditedOn, lastMaterialEditedOn]);
 
   function calculateSuggestions(
     products: Product[],
@@ -108,6 +116,7 @@ export default function Suggestions({ responsible }: Props) {
     });
 
     setOpen(false);
+    setLastMaterialEditedOn(Date.now().toString());
   }
 
 

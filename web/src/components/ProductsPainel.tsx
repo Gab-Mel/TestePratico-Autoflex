@@ -19,11 +19,12 @@ type RawMaterial = {
 
 type Props = {
   responsible: string;
+  setLastProductEditedOn: (name: string) => void;
 };
 
 /* ================= COMPONENT ================= */
 
-export default function ProductPanel({ responsible }: Props) {
+export default function ProductPanel({ responsible, setLastProductEditedOn }: Props) {
   const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -172,6 +173,7 @@ export default function ProductPanel({ responsible }: Props) {
 
     closeModal();
     load();
+    setLastProductEditedOn(Date.now().toString());
   }
 
   /* ================= EDIT ================= */
@@ -196,6 +198,7 @@ export default function ProductPanel({ responsible }: Props) {
     );
 
     setOpen(true);
+    setLastProductEditedOn(Date.now().toString());
   }
 
   /* ================= DELETE ================= */
@@ -211,6 +214,7 @@ export default function ProductPanel({ responsible }: Props) {
     });
 
     load();
+    setLastProductEditedOn(Date.now().toString());
   }
 
   /* ================= HELPERS ================= */
