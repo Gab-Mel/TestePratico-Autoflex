@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Modal from "./Modal";
 
 type Product = {
   cod: number;
@@ -23,8 +24,17 @@ type Suggestion = {
   possible: number;
 };
 
-export default function Suggestions() {
+type Props = {
+  responsible: string;
+};
+
+
+export default function Suggestions({ responsible }: Props) {
+  const [open, setOpen] = useState(false);
+
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [amount, setamount] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -79,6 +89,29 @@ export default function Suggestions() {
       .filter(Boolean) as Suggestion[];
   }
 
+  function OpenProductionModal(product: Product) {
+    setProduct(product);
+    setOpen(true);
+  }
+
+  function produce(product: Product, amount: number) {
+    fetch("http://localhost:3000/production", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user": responsible,
+      },
+      body: JSON.stringify({
+        cod_product: product.cod,
+        amount,
+      }),
+    });
+
+    setOpen(false);
+  }
+
+
+
   return (
     <div>
       <div className="panel-header">
@@ -88,10 +121,37 @@ export default function Suggestions() {
       <ul>
         {suggestions.map(s => (
           <li key={s.product.cod}>
-            {s.product.name} — produzir até {s.possible}
+            <span style={{ fontWeight: "bold" }}>{s.product.name}</span> — produzir até {s.possible} unidades
+            <button
+              style={{ marginLeft: 16 }}
+              onClick={() => OpenProductionModal(s.product)}
+            >
+              Produzir
+            </button>
           </li>
         ))}
       </ul>
+
+      {/* Modal de produção */}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <h3>Produzir</h3>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            produce(product!, Number(amount));
+          }}
+        >
+          <input 
+            type="number" 
+            placeholder="Quantidade a produzir" 
+            value={amount} 
+            onChange={(e) => setamount(e.target.value)} 
+            required
+          />
+          <button type="submit">Confirmar</button>
+        </form>
+      </Modal>
     </div>
   );
 }

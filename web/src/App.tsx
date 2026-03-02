@@ -6,20 +6,18 @@ import MaterialsPainel from "./components/MaterialsPainel";
 import "./index.css";
 import { useState } from "react"; 
 
-/* const [lastEdited, setLastEdited] = useState<string | null>(null); */
-
-
 
 
 function App() {
-  const [responsible, setResponsible] = useState<string>("");
+  const [responsible, setResponsible] = useState<string>("GabMel");
+  const [lastEdited, setLastEdited] = useState<string | null>(null);
   return (
     <>
       <Navbar />
 
       <div className="container">
         <div className="left">
-          <Suggestions />
+          <Suggestions responsible={responsible}/>
         </div>
 
         <div className="right">

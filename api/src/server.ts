@@ -5,6 +5,7 @@ import products from "./routes/products";
 import materials from "./routes/materials";
 import relations from "./routes/relations";
 import history from "./routes/history";
+import production from "./routes/production";
 import { getConnection } from "./db";
 
 
@@ -19,6 +20,7 @@ app.use("/products", products);
 app.use("/materials", materials);
 app.use("/relations", relations);
 app.use("/history", history);
+app.use("/production", production);
 
 // Initialize database connection
 getConnection();
