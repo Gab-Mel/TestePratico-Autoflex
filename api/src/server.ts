@@ -3,6 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import products from "./routes/products";
 import materials from "./routes/materials";
+import relations from "./routes/relations";
+import history from "./routes/history";
+import { getConnection } from "./db";
+
 
 dotenv.config();
 
@@ -13,7 +17,11 @@ app.use(express.json());
 
 app.use("/products", products);
 app.use("/materials", materials);
-app.use("/relations", require("./routes/relations").default);
+app.use("/relations", relations);
+app.use("/history", history);
+
+// Initialize database connection
+getConnection();
 
 app.listen(process.env.PORT, () => {
   console.log(`API rodando na porta ${process.env.PORT}`);

@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 export type Requirement = {
+  cod_product?: number;
   cod_raw?: number;
   quantidade?: number;
 };
@@ -29,7 +28,14 @@ export default function RequirementsEditor({
     onChange(copy);
   };
 
-  const add = () => onChange([...value, {}]);
+  const add = () =>
+    onChange([
+      ...value,
+      {
+        cod_raw: undefined,
+        quantidade: undefined,
+      },
+    ]);
 
   const remove = (i: number) =>
     onChange(value.filter((_, idx) => idx !== i));
@@ -37,7 +43,14 @@ export default function RequirementsEditor({
   return (
     <>
       {value.map((r, i) => (
-        <div key={i} style={{ display: "flex", gap: 8 }}>
+        <div
+          key={i}
+          style={{
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+          }}
+        >
           <select
             disabled={!raws?.length}
             value={r.cod_raw ?? ""}
@@ -46,15 +59,14 @@ export default function RequirementsEditor({
             }
           >
             <option value="" disabled hidden>
-            selecione a matéria-prima
+              selecione a matéria-prima
             </option>
 
-            {raws?.length > 0 &&
-              raws.map((raw) => (
-                <option key={raw.cod} value={raw.cod}>
-                  {raw.name}
-                </option>
-              ))}
+            {raws.map((raw) => (
+              <option key={raw.cod} value={raw.cod}>
+                {raw.name}
+              </option>
+            ))}
           </select>
 
           <input
@@ -67,7 +79,7 @@ export default function RequirementsEditor({
           />
 
           <button type="button" onClick={() => remove(i)}>
-            x
+            ❌
           </button>
         </div>
       ))}

@@ -17,7 +17,7 @@ CREATE TABLE raw_materials (
     name TEXT NOT NULL,
     amount REAL NOT NULL,
     cust REAL NOT NULL,
-    unit_measure REAL NOT NULL
+    unit_measure TEXT NOT NULL
 );
 
 -- =========================
@@ -26,7 +26,7 @@ CREATE TABLE raw_materials (
 CREATE TABLE products_raw_materials (
     cod_product INTEGER NOT NULL,
     cod_raw INTEGER NOT NULL,
-    quantidade REAL NOT NULL,
+    amount REAL NOT NULL,
 
     PRIMARY KEY (cod_product, cod_raw),
 
@@ -64,6 +64,8 @@ CREATE TABLE expected_leftovers (
 CREATE TABLE production_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cod_product INTEGER NOT NULL,
+    quantity REAL NOT NULL,
+    responsible TEXT NOT NULL,
     datatime DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (cod_product)
@@ -77,9 +79,35 @@ CREATE TABLE production_history (
 CREATE TABLE raw_material_purchase_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cod_raw INTEGER NOT NULL,
+    quantity REAL NOT NULL,
+    responsible TEXT NOT NULL,
     datatime DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (cod_raw)
         REFERENCES raw_materials(cod)
         ON DELETE CASCADE
 );
+
+-- =========================
+-- Edition of Tables History
+-- =========================
+
+CREATE TABLE edition_table_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    table_name TEXT NOT NULL,
+    line_id INTEGER NOT NULL,
+    column_name TEXT NOT NULL,
+    old_value TEXT,
+    new_value TEXT NOT NULL,
+    responsible TEXT NOT NULL,
+    datatime DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+CREATE INDEX IF NOT EXISTS idx_prm_product
+ON products_raw_materials(cod_product);
+
+CREATE INDEX IF NOT EXISTS idx_prm_raw
+ON products_raw_materials(cod_raw);

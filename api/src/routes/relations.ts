@@ -1,5 +1,15 @@
 import { Router } from "express";
 import { getConnection } from "../db";
+import { registerHistory } from "../utils/history";
+
+/* =========================
+    Types
+========================= */
+type ProductRawRelation = {
+  cod_product: number;
+  cod_raw: number;
+  amount: number;
+};
 
 const router = Router();
 
@@ -12,12 +22,13 @@ router.get("/", (req, res) => {
 
     const result = conn.execute(`
       SELECT *
-      FROM products_and_materials
-      ORDER BY product_id
+      FROM products_raw_materials
+      ORDER BY cod_product
     `);
 
     res.json(result.rows);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao listar relações" });
   }
 });
@@ -33,83 +44,135 @@ router.get("/product/:productId", (req, res) => {
     const result = conn.execute(
       `
       SELECT *
-      FROM products_and_materials
-      WHERE product_id = ?
+      FROM products_raw_materials
+      WHERE cod_product = ?
       `,
-      [productId]
+      [Number(productId)]
     );
 
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: "Erro ao buscar relações do produto" });
+    console.error(err);
+    res.status(500).json({ error: "Erro ao buscar relações" });
   }
 });
 
-/**
- * CRIAR RELAÇÃO
- */
-router.post("/", (req, res) => {
+/* =========================
+   Insert
+========================= */
+router.post("/", async (req, res) => {
   try {
+    const responsible =
+      req.headers["x-user"]?.toString() ?? "unknown";
     const conn = getConnection();
-    const { product_id, material_id, quantity } = req.body;
+    const { cod_product, cod_raw, amount } = req.body;
+
+    await registerHistory({
+      table: "products_raw_materials",
+      lineId: cod_product,
+      column: `raw_${cod_raw}`,
+      newValue: amount,
+      responsible,
+    });
 
     conn.execute(
       `
-      INSERT INTO products_and_materials
-      (product_id, material_id, quantity)
+      INSERT INTO products_raw_materials
+      (cod_product, cod_raw, amount)
       VALUES (?, ?, ?)
       `,
-      [product_id, material_id, quantity]
+      [cod_product, cod_raw, amount]
     );
 
     res.status(201).json({ message: "Relação criada" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao criar relação" });
   }
 });
 
-/**
- * ATUALIZAR RELAÇÃO
- */
-router.put("/:id", (req, res) => {
+/* =========================
+   Mutate
+========================= */
+router.put("/", async (req, res) => {
   try {
+    const responsible =
+      req.headers["x-user"]?.toString() ?? "unknown";
     const conn = getConnection();
-    const { id } = req.params;
-    const { quantity } = req.body;
+
+    const { cod_product, cod_raw, amount } = req.body;
+    const old = await conn.execute(
+      `SELECT amount FROM products_raw_materials
+      WHERE cod_product=? AND cod_raw=?`,
+      [cod_product, cod_raw]
+    ) as { rows: { amount: number }[] };
+
+    
+    const oldAmount = old.rows[0]?.amount;
+
+    if (oldAmount !== amount) {
+      await registerHistory({
+        table: "products_raw_materials",
+        lineId: cod_product,
+        column: `raw_${cod_raw}`,
+        oldValue: oldAmount,
+        newValue: amount,
+        responsible,
+      });
+    }
 
     conn.execute(
       `
-      UPDATE products_and_materials
-      SET quantity = ?
-      WHERE id = ?
+      UPDATE products_raw_materials
+      SET amount = ?
+      WHERE cod_product = ? AND cod_raw = ?
       `,
-      [quantity, id]
+      [amount, cod_product, cod_raw]
     );
 
     res.json({ message: "Relação atualizada" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao atualizar relação" });
   }
 });
 
-/**
- * DELETAR RELAÇÃO
- */
-router.delete("/:id", (req, res) => {
+/* =========================
+   Delete
+========================= */
+router.delete("/", async(req, res) => {
   try {
+    const responsible =
+      req.headers["x-user"]?.toString() ?? "unknown";
     const conn = getConnection();
-    const { id } = req.params;
+    const { cod_product, cod_raw } = req.body;
+
+    const old = await conn.execute(
+      `SELECT amount FROM products_raw_materials
+      WHERE cod_product=? AND cod_raw=?`,
+      [cod_product, cod_raw]
+    ) as { rows: { amount: number }[] };
+
+    await registerHistory({
+      table: "products_raw_materials",
+      lineId: cod_product,
+      column: `raw_${cod_raw}`,
+      oldValue: old.rows[0]?.amount,
+      newValue: "DELETED",
+      responsible,
+    });
 
     conn.execute(
       `
-      DELETE FROM products_and_materials
-      WHERE id = ?
+      DELETE FROM products_raw_materials
+      WHERE cod_product = ? AND cod_raw = ?
       `,
-      [id]
+      [cod_product, cod_raw]
     );
 
     res.status(204).send();
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erro ao deletar relação" });
   }
 });
