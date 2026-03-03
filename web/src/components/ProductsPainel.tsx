@@ -3,6 +3,7 @@ import Modal from "./Modal";
 import RequirementsEditor, {
   type Requirement,
 } from "./RequirementList";
+import { API } from "../service/api";
 
 /* ================= TYPES ================= */
 
@@ -41,12 +42,12 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
   /* ================= LOAD ================= */
 
   async function load() {
-    const res = await fetch("http://localhost:3000/products");
+    const res = await fetch(`${API}/products`);
     setProducts(await res.json());
   }
 
   useEffect(() => {
-    fetch("http://localhost:3000/materials")
+    fetch(`${API}/materials`)
       .then((r) => r.json())
       .then(setRaws);
 
@@ -68,7 +69,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
     /* ---------- CREATE ---------- */
     if (productId === null && responsible) {
       const res = await fetch(
-        "http://localhost:3000/products",
+        `${API}/products`,
         {
           method: "POST",
           headers: {
@@ -92,7 +93,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
         return;
       }
       await fetch(
-        `http://localhost:3000/products/${productId}`,
+        `${API}/products/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -109,7 +110,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
     /* ================= SYNC RELATIONS ================= */
 
     const res = await fetch(
-      `http://localhost:3000/relations/product/${productId}`
+      `${API}/relations/product/${productId}`
     );
 
     const currentRelations = await res.json();
@@ -130,7 +131,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
     /* ---------- DELETE removidos ---------- */
     for (const r of currentRelations) {
       if (!newMap.has(r.cod_raw)) {
-        await fetch("http://localhost:3000/relations", {
+        await fetch(`${API}/relations`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -155,7 +156,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
       });
 
       if (!exists) {
-        await fetch("http://localhost:3000/relations", {
+        await fetch(`${API}/relations`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -164,7 +165,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
           body,
         });
       } else {
-        await fetch("http://localhost:3000/relations", {
+        await fetch(`${API}/relations`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -188,7 +189,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
     setValue(String(p.value));
 
     const res = await fetch(
-      `http://localhost:3000/relations/product/${p.cod}`
+      `${API}/relations/product/${p.cod}`
     );
 
     const rels = await res.json();
@@ -215,7 +216,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
       return;
     }
 
-    await fetch(`http://localhost:3000/products/${id}`, {
+    await fetch(`${API}/products/${id}`, {
       method: "DELETE",
       headers: {
         "x-user": responsible
