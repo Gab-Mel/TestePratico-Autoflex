@@ -10,6 +10,10 @@ type Props = {
   setLastMaterialEditedOn: (name: string) => void;
   materialEditedOn: string | null;
 };
+type PurchaseItem = {
+  cod_raw: number | "";
+  amount: string;
+};
 
 export default function MaterialPanel({ 
     responsible, 
@@ -20,6 +24,10 @@ export default function MaterialPanel({
   const [open, setOpen] = useState(false);
 
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [shoppingOpen, setShoppingOpen] = useState(false);
+  const [purchases, setPurchases] = useState<PurchaseItem[]>([
+    { cod_raw: "", amount: "" }
+  ]);
 
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -115,6 +123,10 @@ export default function MaterialPanel({
       }),
     });
 
+    /* =========================
+        RESETAR ESTADOS
+    ========================= */
+
     setOpen(false);
     setEditingId(null);
 
@@ -123,6 +135,62 @@ export default function MaterialPanel({
     setCust("");
     setUnitMeasure("");
 
+    load();
+    setLastMaterialEditedOn(Date.now().toString());
+  }
+
+  /* =========================
+     COMPRAS
+  ========================= */
+
+  function addPurchaseRow() {
+    setPurchases(prev => [
+      ...prev,
+      { cod_raw: "", amount: "" }
+    ]);
+  }
+
+  function updatePurchase(
+    index: number,
+    field: keyof PurchaseItem,
+    value: any
+  ) {
+    setPurchases(prev => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  }
+
+  function removePurchase(index: number) {
+    setPurchases(prev => prev.filter((_, i) => i !== index));
+  }
+
+  async function savePurchases(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!responsible) {
+      alert("Usuário não autenticado");
+      return;
+    }
+
+    for (const p of purchases) {
+      if (!p.cod_raw || !p.amount) continue;
+
+      await fetch("http://localhost:3000/raw-material-purchases", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-user": responsible
+        },
+        body: JSON.stringify({
+          cod_raw: Number(p.cod_raw),
+          amount: Number(p.amount)
+        })
+      });
+    }
+
+    setShoppingOpen(false);
     load();
     setLastMaterialEditedOn(Date.now().toString());
   }
@@ -140,8 +208,8 @@ export default function MaterialPanel({
           <button
             className="button-shopping"
             onClick={() => {
-              setEditingId(null);
-              setOpen(true);
+              setPurchases([{ cod_raw: "", amount: "" }]);
+              setShoppingOpen(true);
             }}
           >
             🛒
@@ -234,6 +302,72 @@ export default function MaterialPanel({
           </select>
 
           <button type="submit">Salvar</button>
+        </form>
+      </Modal>
+      <Modal open={shoppingOpen} onClose={() => setShoppingOpen(false)}>
+        <h3>Registrar Compra</h3>
+
+        <form onSubmit={savePurchases}>
+
+          {purchases.map((p, i) => (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                gap: 8,
+                marginBottom: 10
+              }}
+            >
+              {/* MATERIAL */}
+              <select
+                value={p.cod_raw}
+                onChange={(e) =>
+                  updatePurchase(i, "cod_raw", Number(e.target.value))
+                }
+                required
+              >
+                <option value="">Material</option>
+
+                {materials.map(m => (
+                  <option key={m.cod} value={m.cod}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* QUANTIDADE */}
+              <input
+                type="number"
+                placeholder="Quantidade"
+                value={p.amount}
+                onChange={(e) =>
+                  updatePurchase(i, "amount", e.target.value)
+                }
+                required
+              />
+
+              <button
+                type="button"
+                onClick={() => removePurchase(i)}
+              >
+                ❌
+              </button>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={addPurchaseRow}
+          >
+            ➕ Adicionar item
+          </button>
+
+          <hr />
+
+          <button type="submit">
+            Salvar compra
+          </button>
+
         </form>
       </Modal>
     </div>
