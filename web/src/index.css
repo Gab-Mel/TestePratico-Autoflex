@@ -100,15 +100,14 @@ button:focus-visible {
   background: #1f2937;
   color: white;
   display: flex;
-  align-items: center;
+  justify-content: space-between;
   padding: 4px 12px;
   flex-shrink: 0;
 }
 
 .panel-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 
   padding-bottom: 10px;
   border-bottom: 1px solid #444;
@@ -118,6 +117,13 @@ button:focus-visible {
 
   background: white; 
   z-index: 10;
+}
+
+.home-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .add-btn {
@@ -248,10 +254,21 @@ button:focus-visible {
     Suggestions
 ========================= */
 
+.suggestions-table {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .suggestion-list {
   list-style: none;
   padding: 0;
   margin: 0;
+
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .suggestion-row {
@@ -259,6 +276,18 @@ button:focus-visible {
   grid-template-columns: 1fr 2fr auto;
   gap: 16px;
   padding: 8px 0;
+}
+
+.suggestion-title {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 16px;
+
+  padding: 8px 0;
+  font-weight: bold;
+
+  position: sticky;
+  top: 0;
 }
 
 .col-possible {
@@ -276,6 +305,18 @@ button:focus-visible {
   margin: 0;
 }
 
+.material-title {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  gap: 16px;
+
+  padding: 8px 0;
+  font-weight: bold;
+
+  position: sticky;
+  top: 0;
+}
+
 .material-row {
   grid-template-columns: 1fr 1fr 1fr 1fr auto;
   display: grid;
@@ -290,6 +331,18 @@ button:focus-visible {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.product-title {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+
+  padding: 8px 0;
+  font-weight: bold;
+
+  position: sticky;
+  top: 0;
 }
 
 .product-row {

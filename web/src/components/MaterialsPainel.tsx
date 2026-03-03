@@ -203,27 +203,34 @@ export default function MaterialPanel({
     <div>
       {/* HEADER */}
       <div className="panel-header">
-        <h3>Insumos</h3>
+        <div className="home-header">
+          <h3>Insumos</h3>
 
-        <div>
-          <button
-            className="button-shopping"
-            onClick={() => {
-              setPurchases([{ cod_raw: "", amount: "" }]);
-              setShoppingOpen(true);
-            }}
-          >
-            🛒
-          </button>
-          <button
-            className="button-register"
-            onClick={() => {
-              setEditingId(null);
-              setOpen(true);
-            }}
-          >
-            ➕
-          </button>
+          <div>
+            <button
+              className="button-shopping"
+              onClick={() => {
+                setPurchases([{ cod_raw: "", amount: "" }]);
+                setShoppingOpen(true);
+              }}
+            >
+              🛒
+            </button>
+            <button
+              className="button-register"
+              onClick={() => {
+                setEditingId(null);
+                setOpen(true);
+              }}
+            >
+              ➕
+            </button>
+          </div>
+        </div>
+        <div className="material-title">
+                <span style={{ fontWeight: "bold" }} className="title-row">Nome</span> 
+                <span style={{ fontWeight: "bold"}} className="title-row"> Quantidade</span> 
+                <span style={{ fontWeight: "bold"}} className="title-row"> Custo</span> 
         </div>
       </div>
 

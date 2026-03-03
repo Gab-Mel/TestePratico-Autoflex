@@ -242,14 +242,20 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
   return (
     <div>
       <div className="panel-header">
-        <h3>Produtos</h3>
+        <div className="home-header">
+          <h3>Produtos</h3>
 
-        <button
-          className="button-register"
-          onClick={() => setOpen(true)}
-        >
-          ➕
-        </button>
+          <button
+            className="button-register"
+            onClick={() => setOpen(true)}
+          >
+            ➕
+          </button>
+        </div>
+        <div className="product-title">
+          <span style={{ fontWeight: "bold" }} className="title-row">Nome</span>
+          <span style={{ fontWeight: "bold" }} className="title-row">Valor</span>
+        </div>
       </div>
 
       <ul className="product-list">
