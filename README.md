@@ -1,6 +1,8 @@
 # TestePratico-Autoflex
 Esse repositório é destinado a resolver o problema dado por Projedata para candidatar-se à vaga Desenvolvedor de Software Full Stack Júnior
 
+Atensão o site do link às vezes tem atraso de até 50s para acordar o servidor devido ao render.
+
 # Enunciado:
 
 ## Descrição do problema:
