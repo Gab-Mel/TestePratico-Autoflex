@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
+import { API } from "../service/api";
+
+/* =========================
+    TYPES
+========================= */
 
 type Product = {
   cod: number;
@@ -47,9 +52,9 @@ export default function Suggestions({
   useEffect(() => {
     async function load() {
       const [p, m, r] = await Promise.all([
-        fetch("http://localhost:3000/products").then(res => res.json()),
-        fetch("http://localhost:3000/materials").then(res => res.json()),
-        fetch("http://localhost:3000/relations").then(res => res.json()),
+        fetch(`${API}/products`).then(res => res.json()),
+        fetch(`${API}/materials`).then(res => res.json()),
+        fetch(`${API}/relations`).then(res => res.json()),
       ]);
 
       const result = calculateSuggestions(p, m, r);
@@ -107,7 +112,7 @@ export default function Suggestions({
       alert("Faça login para produzir");
       return;
     }
-    fetch("http://localhost:3000/production", {
+    fetch(`${API}/production`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

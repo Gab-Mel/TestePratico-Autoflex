@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API } from "../service/api";
 
 type User = {
   username: string;
@@ -20,8 +21,8 @@ export default function Navbar({ responsible, setResponsible }: Props) {
     e.preventDefault();
 
     const url = isSignup
-      ? "http://localhost:3000/users"
-      : "http://localhost:3000/users/login";
+      ? `${API}/users`
+      : `${API}/users/login`;
 
     const res = await fetch(url, {
       method: "POST",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
+import { API } from "../service/api";
 
 /* =========================
     TYPES
@@ -45,7 +46,7 @@ export default function MaterialPanel({
      LOAD
   ========================= */
   async function load() {
-    const res = await fetch("http://localhost:3000/materials");
+    const res = await fetch(`${API}/materials`);
     setMaterials(await res.json());
   }
 
@@ -82,7 +83,7 @@ export default function MaterialPanel({
       alert("Usuário não autenticado");
       return;
     }
-    await fetch(`http://localhost:3000/materials/${id}`, {
+    await fetch(`${API}/materials/${id}`, {
       method: "DELETE",
       headers: {
         "x-user": responsible
@@ -100,8 +101,8 @@ export default function MaterialPanel({
     e.preventDefault();
 
     const url = editingId
-      ? `http://localhost:3000/materials/${editingId}`
-      : "http://localhost:3000/materials";
+      ? `${API}/materials/${editingId}`
+      : `${API}/materials`;
 
     const method = editingId ? "PUT" : "POST";
 
@@ -177,7 +178,7 @@ export default function MaterialPanel({
     for (const p of purchases) {
       if (!p.cod_raw || !p.amount) continue;
 
-      await fetch("http://localhost:3000/raw-material-purchases", {
+      await fetch(`${API}/raw-material-purchases`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
