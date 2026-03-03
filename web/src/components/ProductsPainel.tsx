@@ -18,7 +18,7 @@ type RawMaterial = {
 };
 
 type Props = {
-  responsible: string;
+  responsible: string | null;
   setLastProductEditedOn: (name: string) => void;
 };
 
@@ -66,7 +66,7 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
     };
 
     /* ---------- CREATE ---------- */
-    if (productId === null) {
+    if (productId === null && responsible) {
       const res = await fetch(
         "http://localhost:3000/products",
         {
@@ -87,6 +87,10 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
 
     /* ---------- UPDATE ---------- */
     else {
+      if (!responsible) {
+        alert("Usuário não autenticado");
+        return;
+      }
       await fetch(
         `http://localhost:3000/products/${productId}`,
         {
@@ -205,6 +209,11 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
 
   async function deleteProduct(id: number) {
     if (!confirm("Deseja deletar o produto?")) return;
+
+    if (!responsible) {
+      alert("Usuário não autenticado");
+      return;
+    }
 
     await fetch(`http://localhost:3000/products/${id}`, {
       method: "DELETE",

@@ -6,7 +6,7 @@ import Modal from "./Modal";
 ========================= */
 
 type Props = {
-  responsible: string;
+  responsible: string | null;
   setLastMaterialEditedOn: (name: string) => void;
   materialEditedOn: string | null;
 };
@@ -69,7 +69,11 @@ export default function MaterialPanel({
     );
 
     if (!confirmDelete) return;
-
+    
+    if (!responsible) {
+      alert("Usuário não autenticado");
+      return;
+    }
     await fetch(`http://localhost:3000/materials/${id}`, {
       method: "DELETE",
       headers: {
@@ -93,6 +97,10 @@ export default function MaterialPanel({
 
     const method = editingId ? "PUT" : "POST";
 
+    if (!responsible) {
+      alert("Usuário não autenticado");
+      return;
+    }
     await fetch(url, {
       method,
       headers: { 

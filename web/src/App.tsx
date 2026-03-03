@@ -2,24 +2,41 @@ import Navbar from "./components/Navbar";
 import Suggestions from "./components/Suggestions";
 import ProductsPainel from "./components/ProductsPainel";
 import MaterialsPainel from "./components/MaterialsPainel";
+import { useEffect, useState } from "react";
 
 import "./index.css";
-import { useState } from "react"; 
 
+type User = {
+  username: string;
+  role: string;
+};
 
 
 function App() {
-  const [responsible, setResponsible] = useState<string>("GabMel");
+  const [responsible, setResponsible] = useState<User | null>(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
   const [lastMaterialEditedOn, setLastMaterialEditedOn] = useState<string | null>(null);
   const [lastProductEditedOn, setLastProductEditedOn] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (responsible)
+      localStorage.setItem("user", JSON.stringify(responsible));
+    else
+      localStorage.removeItem("user");
+  }, [responsible]);
   return (
     <>
-      <Navbar />
+      <Navbar 
+        responsible={responsible?.username ?? null}
+        setResponsible={setResponsible}
+      />
 
       <div className="container">
         <div className="left">
           <Suggestions 
-            responsible={responsible}
+            responsible={responsible?.username ?? null}
             lastMaterialEditedOn={lastMaterialEditedOn}
             lastProductEditedOn={lastProductEditedOn}
             setLastMaterialEditedOn={setLastMaterialEditedOn}
@@ -28,11 +45,11 @@ function App() {
 
         <div className="right">
           <ProductsPainel 
-            responsible={responsible} 
+            responsible={responsible?.username ?? null} 
             setLastProductEditedOn={setLastProductEditedOn}
           />
           <MaterialsPainel 
-            responsible={responsible} 
+            responsible={responsible?.username ?? null} 
             setLastMaterialEditedOn={setLastMaterialEditedOn} 
             materialEditedOn={lastMaterialEditedOn}
           />

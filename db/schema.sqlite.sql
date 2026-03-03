@@ -104,6 +104,16 @@ CREATE TABLE edition_table_history (
 );
 
 
+-- =========================
+-- Users 
+-- =========================
+CREATE TABLE users (
+    username TEXT PRIMARY KEY,
+    password TEXT NOT NULL,
+    role TEXT NOT NULL
+);
+
+
 
 
 CREATE INDEX IF NOT EXISTS idx_prm_product

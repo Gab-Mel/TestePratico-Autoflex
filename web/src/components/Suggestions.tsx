@@ -25,7 +25,7 @@ type Suggestion = {
 };
 
 type Props = {
-  responsible: string;
+  responsible: string | null;
   lastProductEditedOn: string | null;
   lastMaterialEditedOn: string | null;
   setLastMaterialEditedOn: (name: string) => void;
@@ -103,6 +103,10 @@ export default function Suggestions({
   }
 
   function produce(product: Product, amount: number) {
+    if (!responsible) {
+      alert("Faça login para produzir");
+      return;
+    }
     fetch("http://localhost:3000/production", {
       method: "POST",
       headers: {
