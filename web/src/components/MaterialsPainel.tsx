@@ -136,48 +136,53 @@ export default function MaterialPanel({
       <div className="panel-header">
         <h3>Insumos</h3>
 
-        <button
-          className="add-btn"
-          onClick={() => {
-            setEditingId(null);
-            setOpen(true);
-          }}
-        >
-          +
-        </button>
+        <div>
+          <button
+            className="button-shopping"
+            onClick={() => {
+              setEditingId(null);
+              setOpen(true);
+            }}
+          >
+            🛒
+          </button>
+          <button
+            className="button-register"
+            onClick={() => {
+              setEditingId(null);
+              setOpen(true);
+            }}
+          >
+            ➕
+          </button>
+        </div>
       </div>
 
       {/* LISTA */}
-      <ul>
+      <ul className="material-list">
         {materials.map((m) => (
           <li
             key={m.cod}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-            }}
+            className="material-row"
           >
-            <span style={{ flex: 1 }}>
-              {m.name} — {m.amount} {m.unit_measure}
-              {" "} (custo: {m.cust})
-            </span>
+            <span> {m.name} </span>
+            <span> {m.amount} {m.unit_measure} </span>
+            <span> {m.cust} </span>
 
-            <button onClick={() => startEdit(m)}>
-              Editar
-            </button>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button 
+              className="button-edit"
+              onClick={() => startEdit(m)}>
+                ✏️
+              </button>
 
-            <button
-              onClick={() => deleteMaterial(m.cod)}
-              style={{
-                background: "#ff4d4f",
-                color: "white",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              X
-            </button>
+              <button
+                className="button-delete"
+                onClick={() => deleteMaterial(m.cod)}
+              >
+                ❌
+              </button>
+            </div>
           </li>
         ))}
       </ul>

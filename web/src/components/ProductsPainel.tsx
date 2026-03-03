@@ -244,33 +244,36 @@ export default function ProductPanel({ responsible, setLastProductEditedOn }: Pr
         <h3>Produtos</h3>
 
         <button
-          className="add-btn"
+          className="button-register"
           onClick={() => setOpen(true)}
         >
-          +
+          ➕
         </button>
       </div>
 
-      <ul>
+      <ul className="product-list">
         {products.map((p) => (
           <li
             key={p.cod}
+            className="product-row"
             style={{
-              display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
             }}
           >
-            <span>
-              {p.name} — R$ {p.value}
-            </span>
+            <span>{p.name}</span>
+            <span>R$ {p.value}</span>
+
 
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => editProduct(p)}>
+              <button 
+              className="button-edit"
+              onClick={() => editProduct(p)}>
                 ✏️
               </button>
 
-              <button onClick={() => deleteProduct(p.cod)}>
+              <button 
+              className="button-delete"
+              onClick={() => deleteProduct(p.cod)}>
                 ❌
               </button>
             </div>

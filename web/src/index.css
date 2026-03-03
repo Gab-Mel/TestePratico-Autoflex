@@ -86,10 +86,10 @@ button:focus-visible {
 ========================= */
 
 .app {
-  display: flex;
-  flex-direction: column;
-  flex: 1;            /* ← ocupa todo espaço disponível */
-  min-height: 0;      /* ← CRÍTICO para flex layouts */
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
 }
 
 /* =========================
@@ -112,6 +112,12 @@ button:focus-visible {
 
   padding-bottom: 10px;
   border-bottom: 1px solid #444;
+
+  position: sticky;
+  top: 0;
+
+  background: white; 
+  z-index: 10;
 }
 
 .add-btn {
@@ -130,46 +136,66 @@ button:focus-visible {
 ========================= */
 
 .container {
-  display: flex;
+  height: calc(100vh - 60px);
+  display: grid;
+  grid-template-columns: 4fr 1fr; /* 80% / 20% */
   flex: 1;
-  min-height: 0; /* evita overflow fantasma */
+  min-height: 0;
 }
 
-/* =========================
-   LEFT PANEL (80%)
-========================= */
-
 .left {
-  flex: 4;
-  padding: 20px;
   border-right: 1px solid #ddd;
   overflow: auto;
 }
 
-/* =========================
-   RIGHT PANEL (20%)
-========================= */
-
 .right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
   min-height: 0;
 }
 
-/* =========================
-   RIGHT SPLIT (50 / 50)
-========================= */
-
 .right > div {
-  flex: 1;
-  padding: 20px;
   border-bottom: 1px solid #ddd;
   overflow: auto;
 }
 
 .right > div:last-child {
   border-bottom: none;
+}
+
+@media (aspect-ratio < 1) {
+  .container {
+    grid-template-columns: 1fr; /* 100% */
+    grid-template-rows: 5fr 4fr; /* 50% / 50% */
+  }
+
+  .left {
+    border: 20px solid #0000;
+  }
+
+  .right {
+    grid-template-rows: auto auto; /* 50% / 50% */
+    grid-template-columns: auto auto;
+    border: 20px solid #0000;
+  }
+}
+
+@media (aspect-ratio >= 1){
+  .container {
+    grid-template-columns: 3fr 2fr; /* 80% / 20% */
+    grid-template-rows: none;
+  }
+
+  .left {
+    border-right: 1px solid #ddd;
+    border: 20px solid #0000;
+  }
+
+  .right {
+    border: 20px solid #0000;
+    grid-template-columns: none;
+    grid-template-rows: auto auto; /* 50% / 50% */
+  }
 }
 
 /* =========================
@@ -188,6 +214,10 @@ button:focus-visible {
 
   button {
     background-color: #f9f9f9;
+  }
+
+  painel-header {
+    background: white;
   }
 }
 
@@ -212,4 +242,115 @@ button:focus-visible {
   padding: 24px;
   border-radius: 8px;
   min-width: 320px;
+}
+
+/* =========================
+    Suggestions
+========================= */
+
+.suggestion-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.suggestion-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.col-possible {
+  color: #888;
+  font-size: 0.9em;
+}
+
+/* =========================
+    Materials
+========================= */
+
+.material-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.material-row {
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  display: grid;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+/* =========================
+    Products
+========================= */
+.product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  padding: 8px 0;
+  justify-content: space-between;
+}
+
+/* =========================
+    Button Groups
+========================= */
+.button-delete {
+  background: #3e0404;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button-edit {
+  background: #bab84a;
+  border: none;
+  color: rgb(253, 255, 145);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button-register {
+  background: #35638f;
+  border: none;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button-produce {
+  background: #93a739;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  justify-self: end;
+}
+
+.button-shopping {
+  background: #b98937;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 8px;
 }

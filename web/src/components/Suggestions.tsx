@@ -131,15 +131,16 @@ export default function Suggestions({
         <h3>Sugestões de Produção</h3>
       </div>
 
-      <ul>
+      <ul className="suggestion-list">
         {suggestions.map(s => (
-          <li key={s.product.cod}>
-            <span style={{ fontWeight: "bold" }}>{s.product.name}</span> — produzir até {s.possible} unidades
+          <li key={s.product.cod} className="suggestion-row">
+            <span style={{ fontWeight: "bold" }}>{s.product.name}</span> 
+            <span className="col-possible"> — produzir até {s.possible} unidades</span> 
             <button
-              style={{ marginLeft: 16 }}
+              className="button-produce"
               onClick={() => OpenProductionModal(s.product)}
             >
-              Produzir
+              🔨
             </button>
           </li>
         ))}
