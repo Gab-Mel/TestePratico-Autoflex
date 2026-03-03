@@ -28,31 +28,38 @@ function App() {
   }, [responsible]);
   return (
     <>
-      <Navbar 
-        responsible={responsible?.username ?? null}
-        setResponsible={setResponsible}
-      />
+      <div className="app">
+        <Navbar 
+          responsible={responsible?.username ?? null}
+          setResponsible={setResponsible}
+        />
 
-      <div className="container">
-        <div className="left">
-          <Suggestions 
-            responsible={responsible?.username ?? null}
-            lastMaterialEditedOn={lastMaterialEditedOn}
-            lastProductEditedOn={lastProductEditedOn}
-            setLastMaterialEditedOn={setLastMaterialEditedOn}
-          />
-        </div>
+        <div className="container">
+          <div className="left">
+            <Suggestions 
+              responsible={responsible?.username ?? null}
+              lastMaterialEditedOn={lastMaterialEditedOn}
+              lastProductEditedOn={lastProductEditedOn}
+              setLastMaterialEditedOn={setLastMaterialEditedOn}
+            />
+          </div>
 
-        <div className="right">
-          <ProductsPainel 
-            responsible={responsible?.username ?? null} 
-            setLastProductEditedOn={setLastProductEditedOn}
-          />
-          <MaterialsPainel 
-            responsible={responsible?.username ?? null} 
-            setLastMaterialEditedOn={setLastMaterialEditedOn} 
-            materialEditedOn={lastMaterialEditedOn}
-          />
+          <div className="right">
+            <div className="ProductsPainel">
+              <ProductsPainel 
+                responsible={responsible?.username ?? null} 
+                setLastProductEditedOn={setLastProductEditedOn}
+              />
+            </div>
+
+            <div className="MaterialsPainel">
+              <MaterialsPainel 
+                responsible={responsible?.username ?? null} 
+                setLastMaterialEditedOn={setLastMaterialEditedOn} 
+                materialEditedOn={lastMaterialEditedOn}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </>
