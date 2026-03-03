@@ -99,7 +99,8 @@ export default function Suggestions({
           possible,
         };
       })
-      .filter(Boolean) as Suggestion[];
+      .filter((s): s is Suggestion => s !== null)
+      .sort((a, b) => b.product.value - a.product.value) as Suggestion[];
   }
 
   function OpenProductionModal(product: Product) {
@@ -134,22 +135,33 @@ export default function Suggestions({
     <div>
       <div className="panel-header">
         <h3>Sugestões de Produção</h3>
+        <div className="suggestion-title">
+                <span style={{ fontWeight: "bold" }} className="title-row">Produto</span> 
+                <span style={{ fontWeight: "bold"}} className="title-row"> Possível produzir</span> 
+        </div>
+      </div>
+        
+
+      <div className="suggestion-table">
+        <ul className="suggestion-list">
+              
+            {suggestions.map(s => (
+              <li key={s.product.cod} className="suggestion-row">
+                <span style={{ fontWeight: "bold" }}>{s.product.name}</span> 
+                <span className="col-possible"> — produzir até {s.possible} unidades</span> 
+                <button
+                  className="button-produce"
+                  onClick={() => OpenProductionModal(s.product)}
+                >
+                  🔨
+                </button>
+              </li>
+            ))}
+          </ul>
+
       </div>
 
-      <ul className="suggestion-list">
-        {suggestions.map(s => (
-          <li key={s.product.cod} className="suggestion-row">
-            <span style={{ fontWeight: "bold" }}>{s.product.name}</span> 
-            <span className="col-possible"> — produzir até {s.possible} unidades</span> 
-            <button
-              className="button-produce"
-              onClick={() => OpenProductionModal(s.product)}
-            >
-              🔨
-            </button>
-          </li>
-        ))}
-      </ul>
+      
 
       {/* Modal de produção */}
       <Modal open={open} onClose={() => setOpen(false)}>
