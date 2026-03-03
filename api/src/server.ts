@@ -7,6 +7,7 @@ import relations from "./routes/relations";
 import history from "./routes/history";
 import production from "./routes/production";
 import users from "./routes/users";
+import purchase from "./routes/purchase";
 import { getConnection } from "./db";
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.use("/relations", relations);
 app.use("/history", history);
 app.use("/production", production);
 app.use("/users", users);
+app.use("/raw-material-purchases", purchase);
 
 // Initialize database connection
 getConnection();
